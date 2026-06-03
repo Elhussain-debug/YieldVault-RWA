@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import EmptyState from "../components/ui/EmptyState";
+import CopyButton from "../components/CopyButton";
 
 const HORIZON_BASE = "https://horizon-testnet.stellar.org";
 const EXPLORER_BASE = "https://stellar.expert/explorer/testnet/tx";
@@ -98,13 +98,8 @@ export default function TransactionReceipt() {
   if (error || !tx) {
     return (
       <div className="receipt-page">
-        <EmptyState
-          kind="error"
-          title="Transaction not found"
-          description={error ?? "We could not find this transaction receipt."}
-          action={{ label: "Back to app", href: "/" }}
-          className="receipt-empty-state"
-        />
+        <p className="receipt-error">{error ?? "Transaction not found."}</p>
+        <Link to="/" className="receipt-back-link">← Back to app</Link>
       </div>
     );
   }
@@ -154,21 +149,27 @@ export default function TransactionReceipt() {
           </div>
           <div className="receipt-row">
             <dt>Wallet Address</dt>
-            <dd className="receipt-mono receipt-truncate" title={tx.source_account}>
-              {tx.source_account}
+            <dd className="receipt-mono receipt-truncate" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span title={tx.source_account} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                {tx.source_account}
+              </span>
+              <CopyButton value={tx.source_account} label="wallet address" />
             </dd>
           </div>
           <div className="receipt-row">
             <dt>Transaction Hash</dt>
-            <dd className="receipt-mono receipt-truncate" title={tx.hash}>
+            <dd className="receipt-mono receipt-truncate" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <a
                 href={`${EXPLORER_BASE}/${tx.hash}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="receipt-explorer-link"
+                title={tx.hash}
+                style={{ overflow: "hidden", textOverflow: "ellipsis" }}
               >
                 {tx.hash}
               </a>
+              <CopyButton value={tx.hash} label="transaction hash" />
             </dd>
           </div>
           {tx.memo && (
